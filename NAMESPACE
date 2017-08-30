@@ -1,0 +1,10 @@
+export(BMN.samples,
+       BMN.logistic,
+       testOneBMN,
+       testTwoBMN,
+       global.tune,
+       multiple.tune.onesample,
+       multiple.tune.twosample)
+import(BMN, evd, glmnet, gdata, igraph, Matrix)
+importFrom("stats", "coef", "cov", "lm", "qnorm","residuals", "sd")
+importFrom("utils")
