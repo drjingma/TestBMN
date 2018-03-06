@@ -1,9 +1,12 @@
-export(BMN.samples,
-       BMN.logistic,
-       testOneBMN,
-       testTwoBMN,
-       global.tune,
-       multiple.tune.onesample,
-       multiple.tune.twosample)
-import(BMN, evd, glmnet, gdata, igraph, Matrix)
+export(BMN.logistic)
+export(BMN.samples)
+export(global.tune)
+export(multiple.tune.onesample)
+export(multiple.tune.twosample)
+export(testOneBMN)
+export(testTwoBMN)
+import(glmnet, Matrix)
 importFrom("stats", "coef", "cov", "lm", "pnorm","qnorm","rbinom", "residuals", "sd")
+importFrom("evd", "pgumbel")
+importFrom("gdata", "upperTriangle")
+importFrom("igraph", "sample_pa")
