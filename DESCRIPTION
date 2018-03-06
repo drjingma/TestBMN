@@ -9,7 +9,6 @@ Description: Conduct one-sample and two-sample testing of binary Markov networks
 Depends: glmnet, Matrix
 License: MIT + file LICENSE
 LazyLoad: yes
-Suggests: fields, knitr,
-    rmarkdown
+Suggests: evd, gdata, fields, igraph, knitr, rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
