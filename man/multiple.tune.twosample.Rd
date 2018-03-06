@@ -37,9 +37,6 @@ Jing Ma
 }
 
 \examples{
-library(igraph)
-library(evd)
-library(gdata)
 library(glmnet)
 
 set.seed(1)

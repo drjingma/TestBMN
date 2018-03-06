@@ -31,10 +31,7 @@ Jing Ma
 \code{\link{BMN.logistic}}
 }
 \examples{
-library(evd)
-library(gdata)
 library(glmnet)
-library(igraph)
 
 set.seed(1)
 

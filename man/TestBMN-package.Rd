@@ -32,7 +32,7 @@ More details about the method implemented in the TestBMN-package are available i
 Jing Ma <crystal.jing.ma@gmail.com>
 }
 \references{
-Cai, T. T., Li, H., Ma, J. & Xia, Y. (2017+). A testing framework for detecting differential micorbial networks.
+Cai, T. T., Li, H., Ma, J. & Xia, Y. (2018+). Differential Markov random fields analysis with applications to detecting differential micorbial communities.
 
 Xia, Y., Cai, T., & Cai, T. T. (2015). Testing differential networks with applications to the detection of gene-gene interactions. Biometrika, 102(2), 247-266.
 
@@ -42,9 +42,6 @@ Ravikumar, P., Wainwright, M. J., & Lafferty, J. D. (2010). High-dimensional Isi
 \keyword{Markov networks}
 
 \examples{
-library(igraph)
-library(evd)
-library(gdata)
 library(glmnet)
 
 set.seed(1)

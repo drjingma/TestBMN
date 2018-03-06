@@ -58,8 +58,6 @@ Jing Ma
 \code{\link{testOneBMN}}, \code{\link{global.tune}}, \code{\link{multiple.tune.twosample}}, \code{\link{BMN.logistic}}
 }
 \examples{
-library(evd)
-library(gdata)
 library(glmnet)
 
 set.seed(1)

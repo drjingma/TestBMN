@@ -58,8 +58,6 @@ Jing Ma
 
 \examples{
 library(glmnet)
-library(gdata)
-library(evd)
 
 set.seed(1)
 

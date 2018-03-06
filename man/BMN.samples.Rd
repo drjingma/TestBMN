@@ -33,8 +33,6 @@ Jing Ma
 \link[BMN]{BMNSamples}
 }
 \examples{
-library(gdata)
-library(igraph)
 set.seed(1)
 
 p = 50    # number of variables
