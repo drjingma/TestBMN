@@ -6,9 +6,17 @@ Date: 2018-03-06
 Author: Jing Ma
 Maintainer: Jing Ma <crystal.jing.ma@gmail.com>
 Description: Conduct one-sample and two-sample testing of binary Markov networks. The test can be at the network level (global) or at the edge level (multiple). 
-Depends: glmnet, Matrix
+Depends: 
+  evd, 
+  gdata,  
+  glmnet, 
+  igraph, 
+  Matrix
 License: MIT + file LICENSE
 LazyLoad: yes
-Suggests: evd, gdata, fields, igraph, knitr, rmarkdown
+Suggests: 
+  fields, 
+  knitr, 
+  rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
