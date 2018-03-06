@@ -1,3 +1,4 @@
+#' @export
 multiple.tune.onesample <-
   function(X,
            B,

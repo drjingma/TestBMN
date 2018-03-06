@@ -1,3 +1,4 @@
+#' @export
 testOneBMN <-
 function(X,
          lambda,

@@ -1,3 +1,4 @@
+#' @export
 testTwoBMN <-
   function(dat,
            lambda,

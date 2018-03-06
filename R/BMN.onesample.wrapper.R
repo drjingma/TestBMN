@@ -1,3 +1,5 @@
+#' @importFrom evd pgumbel
+
 BMN.onesample.wrapper <-
   function(X,
            lambda,

@@ -1,3 +1,5 @@
+#' @export
+
 BMN.samples <-
 function(theta, numSamples, burnIn, skip){
   p = dim(theta)[1]

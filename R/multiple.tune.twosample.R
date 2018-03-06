@@ -1,3 +1,4 @@
+#' @export
 multiple.tune.twosample <-
   function(dat,
            B,

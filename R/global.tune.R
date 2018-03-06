@@ -1,3 +1,4 @@
+#' @export
 global.tune <-
   function(X,
            Lambda,

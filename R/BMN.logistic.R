@@ -1,4 +1,4 @@
-
+#' @export
 BMN.logistic <-
   function(X,
            lambda,
