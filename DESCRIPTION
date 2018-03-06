@@ -2,10 +2,14 @@ Package: TestBMN
 Type: Package
 Title: Testing for binary Markov networks
 Version: 1.0
-Date: 2017-05-10
+Date: 2018-03-06
 Author: Jing Ma
 Maintainer: Jing Ma <crystal.jing.ma@gmail.com>
 Description: Conduct one-sample and two-sample testing of binary Markov networks. The test can be at the network level (global) or at the edge level (multiple). 
-Depends: BMN, evd, glmnet, gdata, igraph, Matrix
-License: GPL (>=2)
+Depends: glmnet, Matrix
+License: MIT + file LICENSE
 LazyLoad: yes
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
+RoxygenNote: 6.0.1
