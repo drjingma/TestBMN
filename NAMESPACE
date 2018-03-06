@@ -6,5 +6,5 @@ export(BMN.samples,
        multiple.tune.onesample,
        multiple.tune.twosample)
 import(BMN, evd, glmnet, gdata, igraph, Matrix)
-importFrom("stats", "coef", "cov", "lm", "qnorm","residuals", "sd")
+importFrom("stats", "coef", "cov", "lm", "pnorm","qnorm","rbinom", "residuals", "sd")
 importFrom("utils")
