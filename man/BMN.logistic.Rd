@@ -60,7 +60,7 @@ q = (p*(p - 1))/2
 
 ##---(1) Generate the network  
 g_sf = sample_pa(p, directed=FALSE)
-Amat = as.matrix(get.adjacency(g_sf, type="both"))
+Amat = as.matrix(as_adjacency_matrix(g_sf, type="both"))
 
 ##---(2) Generate the Theta  
 weights = matrix(0, p, p)
