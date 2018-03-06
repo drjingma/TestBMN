@@ -43,7 +43,7 @@ Jing Ma
 }
 
 \seealso{
-\code{\link{BMNPseudo}}, \code{\link{glmnet}}
+\code{BMN::BMNPseudo}, \code{\link{glmnet}}
 }
 \examples{
 library(glmnet)
