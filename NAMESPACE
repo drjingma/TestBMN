@@ -7,4 +7,3 @@ export(BMN.samples,
        multiple.tune.twosample)
 import(BMN, evd, glmnet, gdata, igraph, Matrix)
 importFrom("stats", "coef", "cov", "lm", "pnorm","qnorm","rbinom", "residuals", "sd")
-importFrom("utils")
