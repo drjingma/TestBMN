@@ -1,0 +1,198 @@
+---
+title: "Testing for binary Markov networks"
+author: "Jing Ma"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Testing for binary Markov networks}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: mybib.bib
+---
+
+```{r, include=FALSE}
+rm(list=ls())
+knitr::opts_chunk$set(echo = TRUE)
+
+library(glmnet)
+library(gdata)
+library(igraph)
+library(fields)
+library(evd)
+library(Matrix)
+# library(TestBMN)
+source('../R/BMN.logistic.R')
+source('../R/BMN.onesample.wrapper.R')
+source('../R/BMN.samples.R')
+source('../R/BMN.twosample.wrapper.R')
+source('../R/debias.R')
+source('../R/find.tau.R')
+source('../R/GibbsIteration.R')
+source('../R/global.tune.R')
+source('../R/global.tune.wrapper.R')
+source('../R/logit.loss.R')
+source('../R/multiple.tune.onesample.R')
+source('../R/multiple.tune.twosample.R')
+source('../R/nextSample.R')
+source('../R/testOneBMN.R')
+source('../R/testTwoBMN.R')
+
+```
+
+## Introduction
+In this vignette, we perform simulations to demonstrate the use of the **TestBMN** package for testing binary Markov networks. This package is based on work in @cai2018differential. 
+
+The probability density function for a binary Markov network with parameter $\Theta$ has the form
+\[
+P(X) \propto \exp\left\{\sum_{1\le r < t \le p} \theta_{r,t} X_r X_t\right\}.
+\]
+The matrix $\Theta$ captures the conditional dependency relationships between components in $X$. For example, $\theta_{r,t}=0$ implies that the variables $X_r$ and $X_t$ are independent conditioning on all remaining variables. Thus, to test whether a network is empty, it suffices to test 
+\[
+H_0: \Theta = 0.
+\]
+In the two-sample case of testing whether two networks are the same, it suffices to test
+\[
+H_0: \Theta_1 = \Theta_2. 
+\]
+In addition, if the interest is to uncover the network structure, one can consider multiple testing
+\[
+H_{0,r,t}: \theta_{r,t} = 0,\quad 1\le r < t \le p,
+\]
+in the one-sample case, and 
+\[
+H_{0,r,t}: \theta_{r,t,1} - \theta_{r,t,2} = 0, \quad 1\le r < t \le p,
+\]
+in the two-sample case. 
+
+## Simulation
+
+### Generating the data
+To generate multivariate binary data, we first simulate $\Theta$ from a scale-free network. 
+
+```{r model}
+set.seed(1)
+
+p = 50    # number of variables
+n = 100   # number of observations per replicate
+n0 = 1000 # burn in tolerance
+rho_high = 0.5  # signal strength 
+rho_low = 0.1   # signal strength 
+eps = 8/n       # tolerance for extreme proportioned observations
+q = (p*(p - 1))/2
+
+# (1) Generate the network  
+g_sf = sample_pa(p, directed=FALSE)
+Amat = as.matrix(get.adjacency(g_sf, type="both"))
+
+# (2) Generate the Theta  
+weights = matrix(0, p, p)
+upperTriangle(weights) = runif(q, rho_low, rho_high) * (2*rbinom(q, 1, 0.5) - 1)
+weights = weights + t(weights)
+Theta = weights * Amat
+```
+
+In the above code, we simulated the network topology as scale-free and generated the weights associated with each edge. 
+
+Since we do not know the normalizing constant in the probability density function $P(X)$, data generation given $\Theta$ is done in a nodewise manner. The nodewise conditional distribution has the form 
+\[
+P(X_r \mid X_{-r}) = \frac{\exp(X_r \sum_{j: j\ne r} X_j \theta_{r,j})}{\exp(-X_r \sum_{j: j\ne r} X_j \theta_{r,j}) + \exp(X_r \sum_{j: j\ne r} X_j \theta_{r,j})}.
+\]
+Binary data are generated via Gibbs sampling with the first 1000 samples as burn-in.
+
+```{r data}
+dat = BMN.samples(Theta, n, n0, skip=10)
+tmp = sapply(1:p, function(i) as.numeric(table(dat[,i]))[1]/n )
+while(min(tmp)<eps || abs(1-max(tmp)<eps)){
+  dat = BMN.samples(Theta, n, n0, skip=10)
+  tmp = sapply(1:p, function(i) as.numeric(table(dat[,i]))[1]/n )
+}
+```
+
+### Model fit
+Given a tuning parameter `lambda`, one can estimate the unknown $\Theta$ using `BMN.logistic`, which is based on nodewise penalized logistic regressions. Note in general the regularization parameter `lambda` needs to be tuned to yield the best network estimate. 
+```{r fit nodewise logistic}
+lambda = rep(0.1, p)
+fit = BMN.logistic(dat, lambda)
+```
+
+One can visualize the estimated `Theta` matrix. 
+```{r fig, fig.height = 5, fig.width = 5, fig.align = "center"}
+image.plot(fit$theta)
+```
+
+### One-sample test
+If one wants to test if $\Theta=0$, then one can first select the tuning parameter with BIC and then test the model. 
+
+```{r global tune}
+empcov = cov(dat)
+LambdaMat = outer(seq(1,15), sqrt(0.01 * diag(empcov) * log(p)/n))
+tune = global.tune(dat, LambdaMat)
+lambda = tune$lambdaOpt
+test1 = testOneBMN(dat, lambda)
+test1$pvalue
+```
+
+As expected, the p value is small and therefore the null hypothesis $\Theta=0$ is rejected. 
+
+### Two-sample test
+One can also conduct two-sample tests with **TestBMN**. To this end, we simulate $\Theta_1$ and $\Theta_2$, whose difference is $Delta\ne 0$. The data are organized as a list of matrices. 
+```{r test two BMN}
+# (1) Generate the Theta
+ncond = 2
+Theta = vector("list", ncond)
+weights = matrix(0, p, p)
+upperTriangle(weights) <- runif(q, rho_low, rho_high) * (2*rbinom(q, 1, 0.5) - 1)
+weights = weights + t(weights)
+Theta[[1]] = weights * Amat
+
+# (2) Generate the difference matrix
+Delta = matrix(0, p, p)
+upperTriangle(Delta) <- runif(q, 1, 2)*sqrt(log(p)/n) * 
+                       (match(1:q, sample(q, 5), nomatch = 0)>0)*(2*rbinom(q, 1, 0.5) - 1)
+Delta = Delta + t(Delta)
+
+Theta[[2]] = Theta[[1]] + Delta
+Theta[[1]] = Theta[[1]] - Delta
+
+# (3) Simulate data and choose tuning parameter
+dat = vector("list", ncond)
+lambda = vector("list", ncond)
+for (k in 1:ncond){
+  dat[[k]] = BMN.samples(Theta[[k]], n, n0, skip=1)
+  tmp = sapply(1:p, function(i) as.numeric(table(dat[[k]][,i]))[1]/n )
+  while(min(tmp)<eps || abs(1-max(tmp)<eps)){
+    dat[[k]] = BMN.samples(Theta[[k]], n, n0, skip=10)
+    tmp = sapply(1:p, function(i) as.numeric(table(dat[[k]][,i]))[1]/n )
+  }
+  empcov = cov(dat[[k]])
+  LambdaMat = outer(seq(1,15), sqrt(0.01 * diag(empcov) * log(p)/n))
+  tune = global.tune(dat[[k]], LambdaMat)
+  lambda[[k]] = tune$lambdaOpt
+}
+
+# (4) Two-sample testing
+test2 = testTwoBMN(dat, lambda)
+test2$pvalue
+```
+
+Again, the small p value suggests the null $\Theta_1=\Theta_2$ be rejected.
+
+### Multiple testing
+The structure of the differential network ($\Delta = \Theta_1 - \Theta_2$) can be recovered using a multiple testing procedure. Selection of the tuning parameter for use in multiple testing is different from the global testing, and is done using the function `multiple.tune.twosample` for the two-sample case and `multiple.tune.onesample` for the one-sample case. Details on how to choose the tuning parameters are available in our paper and also in @xia2015testing. 
+
+```{r multiple}
+lambda = vector("list", ncond)
+tune = multiple.tune.twosample(dat, 1:20, verbose = FALSE)
+for (k in 1:ncond){
+  empcov <- cov(dat[[k]])
+  lambda[[k]] = (tune$b/20) * sqrt( diag(empcov) * log(p)/n )
+}
+test = testTwoBMN(dat, lambda, alpha.multi = 0.20, multiTest = TRUE)
+```
+
+We can visualize the selected network at 20\% false discovery rate. The nonzero entries `test$network` correspond to those entry-wise statistics that are significant. Note this matrix may not be symmetric. 
+```{r test statistic, fig.height = 5, fig.width = 5, fig.align = "center"}
+image.plot(test$network)
+```
+
+## References
