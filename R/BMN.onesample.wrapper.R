@@ -39,8 +39,9 @@ BMN.onesample.wrapper <-
                     lower.tail = F)
     
     ## Multiple testing
+    W = sqrt(W)
+    diffNetwork <- NULL
     if (multiTest){
-      W = sqrt(W)
       tau <- find.tau(W, alpha.multi)
       diffNetwork <- W*(W>tau) #may not be symmetric sometimes
     }
