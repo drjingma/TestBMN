@@ -13,6 +13,6 @@ devtools::install_github("drjingma/TestBMN", build_vignettes=T)
 ```
 
 ## **References**
-**Cai, T. Tony, Li, Hongzhe, Ma, Jing and Xia, Yin**. (2018) Differential Markov random fields analysis with applications to detecting differential microbial community structures. (Submitted)
+**Cai, T. Tony, Li, Hongzhe, Ma, Jing and Xia, Yin**. (2019) [Differential Markov random fields analysis with applications to detecting differential microbial community structures.](http://drjingma.com/papers/ma-bmn) Biometrika
 
 [![Travis-CI Build Status](https://travis-ci.org/drjingma/TestBMN.svg?branch=master)](https://travis-ci.org/drjingma/TestBMN)
