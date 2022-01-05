@@ -15,9 +15,14 @@ function(X, theta) {
       u <-  X[,-r] %*% theta[r,-r]
       dot_f <- (exp(u) - exp(-u)) / (exp(u) + exp(-u))
       ddot_f <- (4 * exp(2 * u)) / (1 + exp(2 * u)) ^ 2
-      ut = X[,-c(r, t)] %*% theta[t, -c(r, t)]
-      ur = X[,-c(r, t)] %*% theta[r, -c(r, t)]
-      
+      if (p==3){
+        ut = X[,-c(r, t)] * theta[t, -c(r, t)]
+        ur = X[,-c(r, t)] * theta[r, -c(r, t)]
+      } else{
+        ut = X[,-c(r, t)] %*% theta[t, -c(r, t)]
+        ur = X[,-c(r, t)] %*% theta[r, -c(r, t)]
+      }
+       
       score[, r, t] <- (X[, t] * exp(-X[, t] * ut) * cosh(X[, t] * theta[r, t] + ur)) / (exp(-ut) * cosh(theta[r, t] + ur) +
                                                                                            exp(ut) * cosh(-theta[r, t] + ur))
       
