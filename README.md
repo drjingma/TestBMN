@@ -1,8 +1,6 @@
-# TestBMN
-TestBMN: Testing for binary Markov networks
+# About
 
 This package conducts one-sample and two-sample testing of binary Markov networks. The test can be at the network level (global) or at the edge level (multiple).
-
 
 ## **Package Installation**
 You can install it directly from GitHub through `devtools`:
